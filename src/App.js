@@ -11,11 +11,7 @@ function App() {
             <Header/>
 
             <Routes>
-
                 <Route path="/" element={<Main/>}/>
-
-                {/*<Route path="*" element={<NotFound/>} />*/}
-
             </Routes>
 
             <Footer/>

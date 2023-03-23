@@ -4,53 +4,44 @@ import './Schedule.css';
 function Schedule({data}) {
     const [payments, setPayments] = useState([]);
 
-    const getPayments = () => {
-        let arrayPayments = [];
+    React.useEffect(() => {
+        const getPayments = () => {
+            let arrayPayments = [];
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric'};
 
-        if (data.type === 'IL') {
-            const daysPayment = data.days / 14;
-            let credit = Number(data.sum);
+            if (data.type === 'IL') {
+                const daysPayment = data.days / 14;
+                let credit = Number(data.sum);
 
-            for (let i = 0; i < daysPayment; i++) {
+                for (let count = 0; count < daysPayment; count++) {
+                    let dateTime = new Date();
+                    dateTime.setDate(dateTime.getDate() + 14 * count);
+                    credit = (credit * data.rate * 14) + credit - data.rep;
+
+                    arrayPayments.push({
+                        id: count,
+                        dateTime: dateTime.toLocaleDateString('ru-RU', dateOptions),
+                        repayment: data.rep.toFixed(2),
+                        credit: count + 1 === daysPayment ? 0 : credit.toFixed(2)
+                    })
+                }
+            } else {
                 let dateTime = new Date();
-                dateTime.setDate(dateTime.getDate() + 14 * i);
-                const options = { day: 'numeric', month: 'long', year: 'numeric'};
-                dateTime = dateTime.toLocaleDateString('ru-RU', options);
-
-                credit = (credit * data.rate * 14) + credit - data.rep;
+                dateTime.setDate(dateTime.getDate() + data.days);
 
                 arrayPayments.push({
-                    id: i,
-                    dateTime: dateTime,
-                    repayment: data.rep.toFixed(2),
-                    credit: i + 1 === daysPayment ? 0 : credit.toFixed(2)
+                    id: 0,
+                    dateTime: dateTime.toLocaleDateString('ru-RU', dateOptions),
+                    repayment: data.rep,
+                    credit: data.rep
                 })
             }
-        } else {
-            const daysPayment = 1;
 
-            let dateTime = new Date();
-            dateTime.setDate(dateTime.getDate() + data.days);
-            const options = { day: 'numeric', month: 'long', year: 'numeric'};
-            dateTime = dateTime.toLocaleDateString('ru-RU', options);
-
-            arrayPayments.push({
-                id: daysPayment,
-                dateTime: dateTime,
-                repayment: data.rep,
-                credit: data.rep
-            })
+            return arrayPayments;
         }
 
-
-
-        return arrayPayments;
-    }
-
-    React.useEffect(() => {
         const payments = getPayments(data);
         setPayments(payments);
-
     }, [data]);
 
     return (

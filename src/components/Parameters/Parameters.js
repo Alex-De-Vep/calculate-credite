@@ -4,7 +4,7 @@ import './Parameters.css';
 function Parameters({creditInfo, onUpdateInfo}) {
     let {minsumm, mindays} = creditInfo;
     const [days, setDays] = useState(0);
-    const [sum, setSum] = useState(0);
+    const [creditSum, setCreditSum] = useState(0);
     const [lastDate, setLastDate] = useState(null);
     const [repayment, setRepayment] = useState(0);
 
@@ -21,36 +21,36 @@ function Parameters({creditInfo, onUpdateInfo}) {
         let date = new Date();
         date.setDate(date.getDate() + period);
         const options = { day: 'numeric', month: 'long', year: 'numeric'};
-        date = date.toLocaleDateString('ru-RU', options);
-        setLastDate(date);
+        setLastDate(date.toLocaleDateString('ru-RU', options));
     }
 
-    const getAnuSumCredit = (period, summa) => {
-        const numberSum = Number(summa);
+    const getAnuSumCredit = (days, summa) => {
+        const creditSum = Number(summa);
 
         switch(creditInfo.type) {
             case 'PDL':
-                const rep = period * numberSum * creditInfo.rate + numberSum;
-                setRepayment(rep);
+                const creditRepayment = days * creditSum * creditInfo.rate + creditSum;
+                setRepayment(creditRepayment);
                 onUpdateInfo({
-                    days: period,
+                    days: days,
                     rate: creditInfo.rate,
                     type: creditInfo.type,
                     sum: summa,
-                    rep,
+                    rep: creditRepayment,
                 });
                 break;
             case 'IL':
-                const i = ((creditInfo.rate * 365) / 26);
-                const n = period / 14;
-                const k = (i * Math.pow((1 + i), n)) / (Math.pow((1 + i), n) - 1);
-                setRepayment(k * numberSum);
+                const percentPeriod = ((creditInfo.rate * 365) / 26);
+                const period = days / 14;
+                const percent = (percentPeriod * Math.pow((1 + percentPeriod), period)) / (Math.pow((1 + percentPeriod), period) - 1);
+                const creditRep = percent * creditSum;
+                setRepayment(creditRep);
                 onUpdateInfo({
-                    days: period,
+                    days: days,
                     rate: creditInfo.rate,
                     type: creditInfo.type,
                     sum: summa,
-                    rep: k * numberSum,
+                    rep: creditRep,
                 });
                 break;
         }
@@ -59,21 +59,20 @@ function Parameters({creditInfo, onUpdateInfo}) {
     const handleChangeDays = (event) => {
         setDays(event.target.value);
         const period = event.target.value;
-        getAnuSumCredit(period, sum);
+        getAnuSumCredit(period, creditSum);
         updateLastDate(period);
     }
 
     const handleChangeSum = (event) => {
-        setSum(event.target.value);
-        const summa = event.target.value;
-        getAnuSumCredit(days, summa);
+        setCreditSum(event.target.value);
+        getAnuSumCredit(days, event.target.value);
         updateLastDate(days);
     }
 
     React.useEffect(() => {
         if (creditInfo) {
             setDays(mindays);
-            setSum(minsumm);
+            setCreditSum(minsumm);
             getAnuSumCredit(mindays, minsumm);
             updateLastDate(mindays);
         }
@@ -86,11 +85,11 @@ function Parameters({creditInfo, onUpdateInfo}) {
                 {{
                     'PDL':
                         <span className="parameters__title_accent">
-                            {` ${sum} рублей на ${days} ${numWord(days, ['день', 'дня', 'дней'])}`}
+                            {` ${creditSum} рублей на ${days} ${numWord(days, ['день', 'дня', 'дней'])}`}
                         </span>,
                     'IL':
                         <span className="parameters__title_accent">
-                            {` ${sum} рублей на ${days / 7} ${numWord(days / 7, ['неделя', 'недели', 'недель'])}`}
+                            {` ${creditSum} рублей на ${days / 7} ${numWord(days / 7, ['неделя', 'недели', 'недель'])}`}
                         </span>
                 }[creditInfo.type]}
             </h2>
@@ -105,7 +104,7 @@ function Parameters({creditInfo, onUpdateInfo}) {
                                min={creditInfo.minsumm}
                                max={creditInfo.maxsumm}
                                step={creditInfo.stepsumm}
-                               value={sum ?? 0}
+                               value={creditSum ?? 0}
                                className='parameters__range-value'/>
                     </div>
                 </li>
@@ -133,7 +132,7 @@ function Parameters({creditInfo, onUpdateInfo}) {
                 <div className="parameters__description-wrapper">
                     <p className="parameters__description">
                         Вы берёте
-                        <b> {sum} рублей </b>
+                        <b> {creditSum} рублей </b>
                         на
                         <b> {days} {numWord(days, ['день', 'дня', 'дней'])} </b>
                         под
@@ -149,7 +148,7 @@ function Parameters({creditInfo, onUpdateInfo}) {
                 <div className="parameters__description-wrapper">
                     <p className="parameters__description">
                         Вы берёте
-                        <b> {sum} рублей </b>
+                        <b> {creditSum} рублей </b>
                         на
                         <b> {days / 7} {numWord(days / 7, ['неделя', 'недели', 'недель'])} </b>
                         под

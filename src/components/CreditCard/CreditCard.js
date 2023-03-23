@@ -3,11 +3,11 @@ import DOMPurify from 'dompurify';
 import './CreditCard.css';
 
 function CreditCard({credit, onCardClick, activeId}) {
+    let description = DOMPurify.sanitize(credit.description, { USE_PROFILES: { html: true } });
+
     function handleClick() {
         onCardClick(credit);
     }
-
-    let description = DOMPurify.sanitize(credit.description, { USE_PROFILES: { html: true } });
 
     return (
         <div className={`credit-card ${credit.id === activeId ? 'credit-card_active' : ''}`} onClick={handleClick}>
@@ -21,14 +21,12 @@ function CreditCard({credit, onCardClick, activeId}) {
                 от {credit.mindays} до {credit.maxdays} дней
             </p>
             <p className="credit-card__text">под {(credit.rate * 100).toFixed(2)} % в сутки</p>
-            {
-                credit.type === "PDL" &&
-                <p className="credit-card__description">Один платёж в конце срока</p>
-            }
-            {
-                credit.type === "IL" &&
-                <p className="credit-card__description">Аннуитетные платежи раз в 2 недели</p>
-            }
+            {{
+                'PDL':
+                    <p className="credit-card__description">Один платёж в конце срока</p>,
+                'IL':
+                    <p className="credit-card__description">Аннуитетные платежи раз в 2 недели</p>
+            }[credit.type]}
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import CreditCardList from "../CreditCardList/CarditCardList";
+import CreditCardList from "../CardList/CardList";
 import api from "../../utils/Api";
 import Parameters from "../Parameters/Parameters";
 import Schedule from "../Schedule/Schedule";
@@ -25,8 +25,8 @@ function Main() {
 
     useEffect(() => {
         api.getData().then(data => {
-            let credits = getCredits(data);
-            setActiveCredit(credits[3]);
+            const credits = getCredits(data);
+            setActiveCredit(credits[0]);
             setCreditCards(credits);
         });
     }, []);
@@ -41,7 +41,7 @@ function Main() {
 
     return (
         <main>
-            <section className="main">
+            <div className="main">
                 <div className="main__container">
                     <h1 className="main__title">Экспресс деньги</h1>
                     <div className="main__info">
@@ -52,7 +52,7 @@ function Main() {
                         <Schedule data={creditInfo} />
                     </div>
                 </div>
-            </section>
+            </div>
         </main>
     )
 }
