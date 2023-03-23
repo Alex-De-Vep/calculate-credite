@@ -1,0 +1,14 @@
+:root {
+    /* Colors */
+    --main: #000000;
+    --gray_1: #c9c9c9;
+    --gray_2: #424242;
+    --accent_1: #39cf3f;
+    --accent_2: #1f8123;
+    --accent_3: #28bb2e;
+    --error: #ff0000;
+    --light-gray: #c4c4c4;
+
+    /* Fonts */
+    --font-stack: "Inter", arial, sans-serif;
+}

@@ -1,0 +1,16 @@
+.credit-card-list {
+    margin: 0;
+}
+
+.credit-card-list__title {
+    font-weight: 500;
+    font-size: 24px;
+}
+
+.credit-card-list__list {
+    margin-top: 48px;
+}
+
+.credit-card-list__item:not(:first-child) {
+    margin-top: 16px;
+}
